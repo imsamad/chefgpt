@@ -50,6 +50,10 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 # Approach
 
+### **0. ER Diagram**
+
+![My SVG](./er-diagram.png)
+
 ### **1. Recipe Matching Algorithm**
 
 - **Step 1**: User inputs/selects ingredients (text input).
