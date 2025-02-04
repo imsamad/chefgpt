@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  email    String    @unique
+  password String?
+  image    String?
+  role     USER_ROLE @default(USER)
+
+  verifiedAt DateTime?
+  blockedAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // both field wd be set if user log in via OAuth strategy
+  oauth_provider OAuthProvider?
+  oauth_id       String?
+
+  savedRecipes SavedRecipes[]
+  ratedRecipes RecipeRating[]
+}
+
+enum OAuthProvider {
+  GOOGLE
+}
+
+enum USER_ROLE {
+  USER
+  ADMIN
+}
+
+model Ingredient {
+  id                 String             @id @default(auto()) @map("_id") @db.ObjectId
+  title              String             @unique
+  dietaryType        DietaryType
+  nutritionalProfile NutritionalProfile
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+}
+
+type NutritionalProfile {
+  protein Float
+  carbs   Float
+  fats    Float
+}
+
+model Recipe {
+  id           String             @id @default(auto()) @map("_id") @db.ObjectId
+  title        String             @unique
+  slug         String             @unique
+  description  String
+  instructions String[]
+  dietaryType  DietaryType
+  cookTime     Int
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  ingredients  RecipeIngredient[]
+
+  ratedBy RecipeRating[]
+  savedBy SavedRecipes[]
+}
+
+type RecipeIngredient {
+  ingredientId String
+  quantity     Float
+  isRequired   Boolean @default(true)
+}
+
+enum DietaryType {
+  VEG
+  NON_VEG
+}
+
+model RecipeRating {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  userId   String @db.ObjectId
+  recipeId String @db.ObjectId
+
+  user   User   @relation(fields: [userId], references: [id])
+  recipe Recipe @relation(fields: [recipeId], references: [id])
+
+  rating Float
+
+  @@unique([userId, recipeId])
+}
+
+model SavedRecipes {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  userId   String @db.ObjectId
+  recipeId String @db.ObjectId
+
+  user   User   @relation(fields: [userId], references: [id])
+  recipe Recipe @relation(fields: [recipeId], references: [id])
+
+  @@unique([userId, recipeId])
+}
