@@ -28,9 +28,12 @@ const RecommendedRecipePage = async () => {
     );
   }
   const ingredientIds = [
-    ...new Set(savedRecipes.flatMap(({ recipe }) => recipe.ingredients.map(i => i.ingredientId)))
+    ...new Set(
+      savedRecipes.flatMap(({ recipe }) =>
+        recipe.ingredients.map((i) => i.ingredientId),
+      ),
+    ),
   ];
-  
 
   const recommendedRecipes = await prismaClient.recipe.findMany({
     where: {
@@ -39,7 +42,7 @@ const RecommendedRecipePage = async () => {
           ingredientId: { in: ingredientIds },
         },
       },
-      id: { notIn: savedRecipes.map(({recipe}) => recipe.id) || [] },
+      id: { notIn: savedRecipes.map(({ recipe }) => recipe.id) || [] },
     },
   });
 
@@ -69,9 +72,9 @@ const RecommendedRecipePage = async () => {
     ingredients: r.ingredients.map((i) => ({
       ...i,
       id: i.ingredientId,
-      title: ingredients.find(({ id }) => id === i.ingredientId)!?.title,
+      title: ingredients.find(({ id }) => id === i.ingredientId)!.title,
       nutritionalProfile: ingredients.find(({ id }) => id === i.ingredientId)!
-        ?.nutritionalProfile,
+        .nutritionalProfile,
     })),
   }));
   return (

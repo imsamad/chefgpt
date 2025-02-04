@@ -27,11 +27,15 @@ const MyRecipesPage = async () => {
       </h1>
     );
   }
- 
+
   const ingredients = await prismaClient.ingredient.findMany({
     where: {
       id: {
-        in: myRecipes.map((m) => m.recipe.ingredients.map(({ingredientId}) => ingredientId)).flat(),
+        in: myRecipes
+          .map((m) =>
+            m.recipe.ingredients.map(({ ingredientId }) => ingredientId),
+          )
+          .flat(),
       },
     },
     select: {
@@ -41,21 +45,22 @@ const MyRecipesPage = async () => {
     },
   });
 
-  const recipesForDisplay: RecipeForDisplay[] = myRecipes.map(({recipe:r}) => ({
-    ...r,
-    ingredients: r.ingredients.map((i) => ({
-      ...i,
-      id: i.ingredientId,
-      title: ingredients.find(({ id }) => id === i.ingredientId)!?.title,
-      nutritionalProfile: ingredients.find(({ id }) => id === i.ingredientId)!
-        ?.nutritionalProfile,
-    })),
-  }));
+  const recipesForDisplay: RecipeForDisplay[] = myRecipes.map(
+    ({ recipe: r }) => ({
+      ...r,
+      ingredients: r.ingredients.map((i) => ({
+        ...i,
+        id: i.ingredientId,
+        title: ingredients.find(({ id }) => id === i.ingredientId)!.title,
+        nutritionalProfile: ingredients.find(({ id }) => id === i.ingredientId)!
+          .nutritionalProfile,
+      })),
+    }),
+  );
 
   return (
     <div className="mb-6">
-      
-        <RecipeList recipes={recipesForDisplay} label="My Recipes" />
+      <RecipeList recipes={recipesForDisplay} label="My Recipes" />
     </div>
   );
 };

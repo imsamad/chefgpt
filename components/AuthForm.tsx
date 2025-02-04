@@ -51,7 +51,7 @@ export function AuthForm({
               title: res.message,
             });
           }
-        } catch (err) {
+        } catch {
           toast({
             variant: "destructive",
             title: "Please try again!",
@@ -73,8 +73,8 @@ export function AuthForm({
           router.push(cbUrl || "/");
         }
       }
-    } catch (err: any) {
-      setErrMsg(err);
+    } catch {
+      // setErrMsg(err);
     } finally {
       setIsLoading(false);
     }

@@ -12,7 +12,7 @@ export const getUserState = async ({
   savedRecipes: boolean;
   ratedRecipes: boolean;
 }) => {
-  let data: { savedRecipes: SavedRecipes[]; ratedRecipes: RecipeRating[] } = {
+  const data: { savedRecipes: SavedRecipes[]; ratedRecipes: RecipeRating[] } = {
     savedRecipes: [],
     ratedRecipes: [],
   };
